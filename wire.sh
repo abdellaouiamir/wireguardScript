@@ -111,8 +111,8 @@ if [[ ! -f "${WG_SERVER_CONF}" ]]; then
 Address = ${WG_SERVER_VPN_IP}/${WG_SUBNET_CIDR}
 ListenPort = ${WG_PORT}
 PrivateKey = ${SERVER_PRIVATE_KEY}
-PostUp = iptables -A FORWARD -i ${WG_IFACE} -j ACCEPT; iptables -t nat -A POSTROUTING -o ${EGRESS_IFACE} -j MASQUERADE
-PostDown = iptables -D FORWARD -i ${WG_IFACE} -j ACCEPT; iptables -t nat -D POSTROUTING -o ${EGRESS_IFACE} -j MASQUERADE
+PostUp = iptables -A FORWARD -i ${WG_IFACE} -j ACCEPT; iptables -t nat -A POSTROUTING -o ${EGRESS_IFACE} -j MASQUERADE; sysctl -w net.ipv4.ip_forward=1 >/dev/null
+PostDown = iptables -D FORWARD -i ${WG_IFACE} -j ACCEPT; iptables -t nat -D POSTROUTING -o ${EGRESS_IFACE} -j MASQUERADE; sysctl -w net.ipv4.ip_forward=0 >/dev/null
 
 EOF
     chmod 600 "${WG_SERVER_CONF}"
@@ -121,12 +121,12 @@ EOF
     echo "${SERVER_ENDPOINT_HOST}" > "${WG_DIR}/server_endpoint.txt"
 
     # Enable IPv4 forwarding
-    if ! sysctl net.ipv4.ip_forward | grep -q ' = 1'; then
-        sysctl -w net.ipv4.ip_forward=1 >/dev/null
-        if ! grep -q '^net.ipv4.ip_forward' /etc/sysctl.conf 2>/dev/null; then
-            echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
-        fi
-    fi
+    # if ! sysctl net.ipv4.ip_forward | grep -q ' = 1'; then
+    #     sysctl -w net.ipv4.ip_forward=1 >/dev/null
+    #     if ! grep -q '^net.ipv4.ip_forward' /etc/sysctl.conf 2>/dev/null; then
+    #         echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
+    #     fi
+    # fi
 
     echo ">> Server config created at ${WG_SERVER_CONF}"
     echo ">> Bring it up with: systemctl enable --now wg-quick@${WG_IFACE}"
@@ -226,7 +226,7 @@ echo "=================================================================="
 if command -v qrencode >/dev/null 2>&1; then
     echo
     echo "Scan this QR code with the WireGuard mobile app:"
-    qrencode -t ansiutf8 < "${CLIENT_CONF}"
+    qrencode -t ansi256utf8 < "${CLIENT_CONF}"
 else
     echo "(Install 'qrencode' to also get a scannable QR code for mobile clients.)"
 fi
