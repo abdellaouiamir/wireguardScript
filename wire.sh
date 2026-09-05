@@ -24,6 +24,7 @@ WG_CLIENTS_DIR="${WG_DIR}/clients"
 WG_SERVER_VPN_IP="${WG_SERVER_VPN_IP:-10.10.0.1}"
 WG_SUBNET_CIDR="${WG_SUBNET_CIDR:-24}"          # /24 -> 10.10.0.0/24
 WG_NETWORK="${WG_NETWORK:-10.10.0.0/${WG_SUBNET_CIDR}}"
+WG_CLIENT_SUBNET_CIDR="${WG_CLIENT_SUBNET_CIDR:-32}"
 
 # DNS pushed to clients
 WG_CLIENT_DNS="${WG_CLIENT_DNS:-1.1.1.1}"
@@ -173,7 +174,7 @@ echo ">> Assigning client IP: ${CLIENT_VPN_IP}"
     echo "[Peer] # ${CLIENT_NAME}"
     echo "PublicKey = ${CLIENT_PUBLIC_KEY}"
     echo "PresharedKey = ${PRESHARED_KEY}"
-    echo "AllowedIPs = ${CLIENT_VPN_IP}/${WG_SUBNET_CIDR}"
+    echo "AllowedIPs = ${CLIENT_VPN_IP}/${WG_CLIENT_SUBNET_CIDR}"
     echo
 } >> "${WG_SERVER_CONF}"
 
@@ -185,7 +186,7 @@ echo ">> Peer added to ${WG_SERVER_CONF}"
 cat > "${CLIENT_CONF}" <<EOF
 [Interface]
 PrivateKey = ${CLIENT_PRIVATE_KEY}
-Address = ${CLIENT_VPN_IP}/${WG_SUBNET_CIDR}
+Address = ${CLIENT_VPN_IP}/${WG_CLIENT_SUBNET_CIDR}
 DNS = ${WG_CLIENT_DNS}
 
 [Peer]
