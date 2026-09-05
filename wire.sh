@@ -185,7 +185,7 @@ echo ">> Peer added to ${WG_SERVER_CONF}"
 cat > "${CLIENT_CONF}" <<EOF
 [Interface]
 PrivateKey = ${CLIENT_PRIVATE_KEY}
-Address = ${CLIENT_VPN_IP}/32
+Address = ${CLIENT_VPN_IP}/${WG_SUBNET_CIDR}
 DNS = ${WG_CLIENT_DNS}
 
 [Peer]
