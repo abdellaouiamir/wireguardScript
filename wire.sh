@@ -173,7 +173,7 @@ echo ">> Assigning client IP: ${CLIENT_VPN_IP}"
     echo "[Peer] # ${CLIENT_NAME}"
     echo "PublicKey = ${CLIENT_PUBLIC_KEY}"
     echo "PresharedKey = ${PRESHARED_KEY}"
-    echo "AllowedIPs = ${CLIENT_VPN_IP}/32"
+    echo "AllowedIPs = ${CLIENT_VPN_IP}/${WG_SUBNET_CIDR}"
     echo
 } >> "${WG_SERVER_CONF}"
 
